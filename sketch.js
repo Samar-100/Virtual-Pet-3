@@ -1,12 +1,17 @@
 var dog, happyDog, database, foodStock, foodS, feedDog, addFood, dogImg;
-var fedTime, lastFed;
-var gameState = "Naming";
-var input;
+var fedTime, lastFed, readState, changeState, gameState;
+var bedroomImg, washroomImg, gardenImg;
+var sadDog, currentTime;
+var backgroundImg = "green";
 //Create variables here
 
 function preload() {
   dogimg = loadImage("images/dogImg.png");
   happyDog = loadImage("images/dogImg1.png");
+  bedroomImg = loadImage("images/Bed Room.png");
+  washroomImg = loadImage("images/Wash Room.png");
+  gardenImg = loadImage("images/Garden.png");
+  sadDog = loadImage("images/Lazy.png");
   //load images here
 }
 
@@ -26,34 +31,58 @@ function setup() {
   fedTime.on("value", (data) => {
     lastFed = data.val();
   });
+  readState = database.ref("gameState");
+  readState.on("value", (data) => {
+    gameState = data.val();
+  });
 }
 
 function draw() {
-  background("green");
+  background(backgroundImg);
   drawSprites();
-  if (gameState === "Naming") {
-    input = new Form();
-    input.display();
+
+  foodobject.display();
+  feedDog = createButton("FEED DOG");
+  feedDog.position(500, 100);
+  feedDog.mousePressed(FeedDog);
+  addFood = createButton("ADD FOOD");
+  addFood.position(400, 100);
+  addFood.mousePressed(AddFood);
+
+  fill(255, 255, 254);
+  textSize(15);
+  if (lastFed >= 12) {
+    text("Last Fed : " + (lastFed % 12) + "PM", 350, 30);
+  } else if (lastFed === 0) {
+    text("Last Fed : " + (lastFed % 12) + "PM", 350, 30);
+  } else {
+    text("Last Fed : " + (lastFed % 12) + " AM", 350, 30);
   }
 
-  if (gameState === "PLAY") {
-    foodobject.display();
-    feedDog = createButton("FEED DOG");
-    feedDog.position(500, 100);
-    feedDog.mousePressed(FeedDog);
-    addFood = createButton("ADD FOOD");
-    addFood.position(400, 100);
-    addFood.mousePressed(AddFood);
+  if (gameState !== "Hungry") {
+    feedDog.hide();
+    addFood.hide();
+    dog.remove();
+  } else {
+    feedDog.show();
+    addFood.show();
+    dog.addImage("sadDog", sadDog);
+  }
 
-    fill(255, 255, 254);
-    textSize(15);
-    if (lastFed >= 12) {
-      text("Last Fed : " + (lastFed % 12) + "PM", 350, 30);
-    } else if (lastFed === 0) {
-      text("Last Fed : " + (lastFed % 12) + "PM", 350, 30);
-    } else {
-      text("Last Fed : " + (lastFed % 12) + " AM", 350, 30);
-    }
+  currentTime = hour();
+  console.log(currentTime);
+  if (currentTime === lastFed + 1) {
+    update("Playing");
+    foodobject.garden();
+  } else if (currentTime === lastFed + 2) {
+    update("Sleeping");
+    foodobject.bedroom();
+  } else if (currentTime > lastFed + 2 && currentTime <= lastFed + 4) {
+    update("Bathing");
+    foodobject.washroom();
+  } else {
+    update("Hungry");
+    foodobject.display();
   }
 }
 
@@ -75,5 +104,11 @@ function FeedDog() {
   database.ref("/").update({
     Food: foodobject.getFoodStock(),
     FeedTime: hour(),
+  });
+}
+
+function update(state) {
+  database.ref("/").update({
+    gameState: state,
   });
 }

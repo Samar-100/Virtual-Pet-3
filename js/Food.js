@@ -18,12 +18,23 @@ class Food {
     return this.foodStock;
   }
 
+  bedroom() {
+    backgroundImg = bedroomImg;
+  }
+
+  washroom() {
+    backgroundImg = washroomImg;
+  }
+
+  garden() {
+    backgroundImg = gardenImg;
+  }
+
   display() {
     var x = 80,
       y = 100;
 
     imageMode(CENTER);
-    image(this.image, 720, 250, 70, 70);
 
     if (this.foodStock != 0) {
       for (var i = 0; i < this.foodStock; i++) {
