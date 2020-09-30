@@ -21,7 +21,6 @@ function setup() {
 
   foodobject = new Food();
   dog = createSprite(800, 250, 10, 10);
-  dog.addImage(dogimg);
   dog.scale = 0.2;
 
   foodStock = database.ref("Food");
@@ -35,18 +34,17 @@ function setup() {
   readState.on("value", (data) => {
     gameState = data.val();
   });
+  feedDog = createButton("FEED DOG");
+  feedDog.position(500, 100);
+  addFood = createButton("ADD FOOD");
+  addFood.position(400, 100);
 }
 
 function draw() {
   background(backgroundImg);
   drawSprites();
 
-  foodobject.display();
-  feedDog = createButton("FEED DOG");
-  feedDog.position(500, 100);
   feedDog.mousePressed(FeedDog);
-  addFood = createButton("ADD FOOD");
-  addFood.position(400, 100);
   addFood.mousePressed(AddFood);
 
   fill(255, 255, 254);
@@ -70,7 +68,6 @@ function draw() {
   }
 
   currentTime = hour();
-  console.log(currentTime);
   if (currentTime === lastFed + 1) {
     update("Playing");
     foodobject.garden();
