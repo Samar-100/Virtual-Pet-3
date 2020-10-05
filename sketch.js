@@ -60,7 +60,7 @@ function draw() {
   if (gameState !== "Hungry") {
     feedDog.hide();
     addFood.hide();
-    dog.remove();
+    // dog.remove();
   } else {
     feedDog.show();
     addFood.show();
@@ -71,12 +71,15 @@ function draw() {
   if (currentTime === lastFed + 1) {
     update("Playing");
     foodobject.garden();
+    dog.remove();
   } else if (currentTime === lastFed + 2) {
     update("Sleeping");
     foodobject.bedroom();
+    dog.remove();
   } else if (currentTime > lastFed + 2 && currentTime <= lastFed + 4) {
     update("Bathing");
     foodobject.washroom();
+    dog.remove();
   } else {
     update("Hungry");
     foodobject.display();
